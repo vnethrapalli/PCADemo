@@ -73,7 +73,7 @@ void gramschmidt_qr_serial(double (*A)[MAXDIM], int n, double (*Q)[MAXDIM], doub
 void eigs_qr(double (*A)[MAXDIM], int n, double (*Q)[MAXDIM], double (*R)[MAXDIM], double (*V)[MAXDIM]) {
     int i, j, evnum, it = 0, max_iter = 100;
     double rowsum, val, norm = -1, infinity_norm = 10000000; // big number
-    double tolerance = 1e-8;
+    double tolerance = 1e-9;
     double (*A_temp)[MAXDIM] = malloc(sizeof(*A_temp)*MAXDIM);
     double (*QQ)[MAXDIM] = malloc(sizeof(*QQ)*MAXDIM);
 
@@ -86,11 +86,6 @@ void eigs_qr(double (*A)[MAXDIM], int n, double (*Q)[MAXDIM], double (*R)[MAXDIM
     while (infinity_norm >= tolerance && it <= max_iter) {
         gramschmidt_qr_serial(A_temp, n, Q, R);
 
-        // printf("\nQQ = \n");
-        // print_matrix(QQ, n, n);
-        // printf("\nQ = \n");
-        // print_matrix(Q, n, n);
-
         /* use A_temp as storage to accumulate product of Qs */
         /* zero out A_temp and reuse its space for next calculation */
         for (i = 0; i < n; i++)
@@ -99,11 +94,6 @@ void eigs_qr(double (*A)[MAXDIM], int n, double (*Q)[MAXDIM], double (*R)[MAXDIM
         matmul_serial(QQ, Q, A_temp, n, n, n);
         matrix_copy(A_temp, QQ, n, n);
 
-        // printf("\nQQ = \n");
-        // print_matrix(QQ, n, n);
-
-        // printf("\n------------------------\n");
-
         /* zero out A_temp and reuse its space for next calculation */
         for (i = 0; i < n; i++)
             for (j = 0; j < n; j++)
@@ -111,18 +101,19 @@ void eigs_qr(double (*A)[MAXDIM], int n, double (*Q)[MAXDIM], double (*R)[MAXDIM
         matmul_serial(R, Q, A_temp, n, n, n);
 
         /* compute infinity norm of A - diag(A) */
-        // for (i = 0; i < n; i++) {
-        //     rowsum = 0;
-        //     for (j = 0; j < n; j++) {
-        //         if (i != j)
-        //             rowsum += abs(A[i][j]);
-        //     }
+        for (i = 0; i < n; i++) {
+            rowsum = 0;
+            for (j = 0; j < n; j++) {
+                if (i != j)
+                    rowsum += fabs(A_temp[i][j]);
+            }
 
-        //     if (rowsum > norm)
-        //         norm = rowsum;
-        // }
-        // infinity_norm = norm;
-        // norm = -1;
+            if (rowsum > norm)
+                norm = rowsum;
+        }
+        infinity_norm = norm;
+
+        norm = -1;
         it += 1;
     }
 
@@ -139,9 +130,8 @@ void eigs_qr(double (*A)[MAXDIM], int n, double (*Q)[MAXDIM], double (*R)[MAXDIM
         */
         for (i = evnum - 1; i >= 0; i--) {
             val = R[i][i+1];
-            for (j = i+1; j < evnum; j++) {
+            for (j = i+1; j < evnum; j++)
                 val -= R[i][j] * QQ[j][i];
-            }
 
             V[i][evnum] = val / (R[evnum][evnum] - R[i][i]);
         }
