@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <time.h>
 
-#define MAXDIM 16
+#define MAXDIM 128
 
 void matmul_serial(double (*A)[MAXDIM], double (*B)[MAXDIM], double (*X)[MAXDIM], int dim1, int dim2, int dim3);
 void matsub_serial(double (*A)[MAXDIM], double (*B)[MAXDIM], double (*X)[MAXDIM], int m, int n);
