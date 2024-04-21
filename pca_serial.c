@@ -8,10 +8,12 @@ int main() {
     double (*X)[MAXFEATURES] = malloc(sizeof(*X)*MAXDATAPOINTS);
     double (*X_std)[MAXFEATURES] = malloc(sizeof(*X_std)*MAXDATAPOINTS);
     double (*cov)[MAXFEATURES] = malloc(sizeof(*cov)*MAXDATAPOINTS);
+    double (*X_proj)[MAXFEATURES] = malloc(sizeof(*cov)*MAXDATAPOINTS);
 
     double (*Q)[MAXFEATURES] = malloc(sizeof(*Q)*MAXDATAPOINTS);
     double (*evals)[MAXFEATURES] = malloc(sizeof(*evals)*MAXDATAPOINTS);
     double (*evects)[MAXFEATURES] = malloc(sizeof(*evects)*MAXDATAPOINTS);
+    double (*proj)[MAXFEATURES] = malloc(sizeof(*proj)*MAXDATAPOINTS);
 
     FILE* fp;
     char* line = NULL;
@@ -68,7 +70,7 @@ int main() {
         }
     }
 
-    print_matrix(cov, cols, cols);
+    // print_matrix(cov, cols, cols);
 
     /* get eigen values and eigen vectors from covariance matrix */
     eigs_qr(cov, cols, Q, evals, evects);
@@ -97,7 +99,42 @@ int main() {
     // for (i = 0; i < cols; i++)
     //     printf("%d\n", sorted_idxs_desc[i]);
 
+    /* write down principal components in order to file for use in python plotter */
+    fp = fopen("data/components.txt", "w");
+    for (i = 0; i < cols; i++) {
+        for (j = 0; j < cols; j++) {
+            if (j != cols - 1)
+                fprintf(fp, "%lf,", evects[j][sorted_idxs_desc[i]]);
+            else
+                fprintf(fp, "%lf\n", evects[j][sorted_idxs_desc[i]]);
+        }   
+    }
+    fclose(fp);
 
+    /* construct projection matrix from the desired number of principal components and eigenvectors */
+    num_components = 1;
+    for (i = 0; i < num_components; i++)
+        for (j = 0; j < cols; j++)
+            proj[j][i] = evects[j][sorted_idxs_desc[i]];
+
+    // print_matrix(proj, cols, num_components);
+
+    /* project standardized data onto the specified principal components */
+    matmul_serial(X_std, proj, X_proj, rows, cols, num_components);
+
+    // print_matrix(X_proj, rows, num_components);
+
+    /* write projected data to file for use in python plotter */
+    fp = fopen("data/xproj.txt", "w");
+    for (i = 0; i < rows; i++) {
+        for (j = 0; j < num_components; j++) {
+            if (j != num_components - 1)
+                fprintf(fp, "%lf,", X_proj[i][j]);
+            else
+                fprintf(fp, "%lf\n", X_proj[i][j]);
+        }   
+    }
+    fclose(fp);
 
     free(X);
     free(cov);
@@ -107,4 +144,5 @@ int main() {
     free(evals);
     free(evects);
     free(sorted_idxs_desc);
+    free(proj);
 }
