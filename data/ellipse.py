@@ -3,6 +3,8 @@ import matplotlib.pyplot as plt
 import random
 random.seed(10)
 
+palette = ['#987284', '#9DBF9E', '#F9B5AC', '#EE7674']
+
 num_data_points = 100
 X = []
 
@@ -17,7 +19,7 @@ for i in range(num_data_points):
     X.append([x, y])
 
 plt.figure()
-plt.scatter([data[0] for data in X], [data[1] for data in X], alpha=0.6)
+plt.scatter([data[0] for data in X], [data[1] for data in X], color=palette[0], alpha=0.7, edgecolors='none')
 plt.title('ellipse data')
 plt.savefig('ellipse.png')
 

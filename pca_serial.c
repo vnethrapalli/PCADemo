@@ -62,7 +62,7 @@ int main() {
         for (j = i; j < cols; j++) {
             tot = 0;
             for (k = 0; k < rows; k++) {
-                tot += (X_std[k][i] - means[i]) * (X_std[k][j] - means[j]);
+                tot += X_std[k][i] * X_std[k][j];
             }
             tot /= rows;
             cov[i][j] = tot;
