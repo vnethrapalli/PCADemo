@@ -47,7 +47,6 @@ int main() {
             sm = next_sm;
             svar = next_svar;
         }
-        // todo store mean for covariance
         means[i] = sm;
 
         /* transform each column of data */
@@ -55,6 +54,7 @@ int main() {
             X_std[j][i] = (X[j][i] - sm) / sqrt(svar);
     }
 
+    // printf("standardized data\n");
     // print_matrix(X_std, rows, cols);
 
     /* compute covariance matrix */
@@ -69,15 +69,17 @@ int main() {
             cov[j][i] = tot;
         }
     }
-
+    
+    // printf("covariance matrix\n");
     // print_matrix(cov, cols, cols);
 
     /* get eigen values and eigen vectors from covariance matrix */
     eigs_qr(cov, cols, Q, evals, evects);
 
-    print_matrix(evals, cols, cols);
-    printf("\n");
-    print_matrix(evects, cols, cols);
+    // printf("eigenvalues (on diagonal):\n");
+    // print_matrix(evals, cols, cols);
+    // printf("\neigenvectors (columns):\n");
+    // print_matrix(evects, cols, cols);
 
     /* picking k biggest principal components to construct projection matrix */
     for (i = 0; i < cols; i++)
@@ -96,10 +98,8 @@ int main() {
         }
     }
 
-    // for (i = 0; i < cols; i++)
-    //     printf("%d\n", sorted_idxs_desc[i]);
 
-    /* write down principal components in order to file for use in python plotter */
+    /* write down principal components in order to file for use in python plotter (transposed) */
     fp = fopen("data/components.txt", "w");
     for (i = 0; i < cols; i++) {
         for (j = 0; j < cols; j++) {
@@ -117,11 +117,13 @@ int main() {
         for (j = 0; j < cols; j++)
             proj[j][i] = evects[j][sorted_idxs_desc[i]];
 
+    // printf("\nprojection matrix:\n");
     // print_matrix(proj, cols, num_components);
 
     /* project standardized data onto the specified principal components */
     matmul_serial(X_std, proj, X_proj, rows, cols, num_components);
 
+    // printf("\nprojected data:\n");
     // print_matrix(X_proj, rows, num_components);
 
     /* write projected data to file for use in python plotter */
