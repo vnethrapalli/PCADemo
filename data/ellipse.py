@@ -1,10 +1,22 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import random
+import sys
 random.seed(10)
 
-palette = ['#987284', '#9DBF9E', '#F9B5AC', '#EE7674']
+# enter a flattened 2x2 matrix for scaling the randomly generated circle
+mat = None
+if len(sys.argv) == 5:
+    mat = [[], []]
+    for i in range(2):
+        for j in range(2):
+            mat[i].append(float(sys.argv[1 + 2 * i + j]))
+else:
+    print('please pass in a space-separated 2x2 matrix (ie. 3 -1 3 1)')
+    exit()
+mat = np.array(mat).T
 
+palette = ['#987284', '#9DBF9E', '#F9B5AC', '#EE7674']
 num_data_points = 100
 X = []
 
@@ -13,13 +25,13 @@ for i in range(num_data_points):
     theta = random.random() * 2 * np.pi
     x = noisy_radius * np.cos(theta)
     y = noisy_radius * np.sin(theta)
+    pt = np.array([[x, y]])
 
-    # multiply by matrix: [3 -1; 3 1]
-    x, y = 3*x - y, 3*x + y
-    X.append([x, y])
+    X.append(np.matmul(pt, mat).flatten())
+X = np.array(X)
 
 plt.figure()
-plt.scatter([data[0] for data in X], [data[1] for data in X], color=palette[0], alpha=0.7, edgecolors='none')
+plt.scatter(X[:, [0]], X[:, [1]], color=palette[0], alpha=0.7, edgecolors='none')
 plt.title('ellipse data')
 plt.savefig('ellipse.png')
 

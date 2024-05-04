@@ -76,10 +76,10 @@ int main() {
     /* get eigen values and eigen vectors from covariance matrix */
     eigs_qr(cov, cols, Q, evals, evects);
 
-    // printf("eigenvalues (on diagonal):\n");
-    // print_matrix(evals, cols, cols);
-    // printf("\neigenvectors (columns):\n");
-    // print_matrix(evects, cols, cols);
+    printf("eigenvalues (on diagonal):\n");
+    print_matrix(evals, cols, cols);
+    printf("\neigenvectors (columns):\n");
+    print_matrix(evects, cols, cols);
 
     /* picking k biggest principal components to construct projection matrix */
     for (i = 0; i < cols; i++)

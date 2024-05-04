@@ -117,7 +117,7 @@ void eigs_qr(double (*A)[MAXDIM], int n, double (*Q)[MAXDIM], double (*R)[MAXDIM
         it += 1;
     }
 
-    printf("\neigs in %d iterations\n", it);
+    printf("\neigs in %d iterations\n\n", it);
 
     // V has columns being the eigen vectors
     /* initialize V to identity matrix */
