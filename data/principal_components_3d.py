@@ -72,7 +72,7 @@ for idx in idxs:
     pt1 = X[idx]
     pt2 = X_proj[idx][0] * components[:, [0]].T + X_proj[idx][1] * components[:, [1]].T
     pt2 = pt2[0]
-    plt.plot([pt1[0], pt2[0]], [pt1[1], pt2[1]], alpha=0.5, color=palette[4])
+    plt.plot([pt1[0], pt2[0]], [pt1[1], pt2[1]], [pt1[2], pt2[2]], alpha=0.9, color=palette[4])
 
 plt.xlabel('$x$ standardized')
 plt.ylabel('$y$ standardized')

@@ -90,32 +90,15 @@ int main(int argc, char* argv[]) {
     printf("\neigenvectors (columns):\n");
     print_matrix(evects, cols, cols);
 
-    /* picking k biggest principal components to construct projection matrix */
-    for (i = 0; i < cols; i++)
-        sorted_idxs_desc[i] = i;
-
-    /* selection sort is used here for simplicity, but more efficient sorts could be used */
-    for (i = cols-1; i > 0; i--) {
-        min_eval_idx = i;
-        for (j = i - 1; j >= 0; j--) {
-            if (evals[j][j] < evals[min_eval_idx][min_eval_idx]) {
-                min_eval_idx = j;
-            }
-            temp = sorted_idxs_desc[i];
-            sorted_idxs_desc[i] = min_eval_idx;
-            sorted_idxs_desc[min_eval_idx] = temp;
-        }
-    }
-
 
     /* write down principal components in order to file for use in python plotter (transposed) */
     fp = fopen("data/components.txt", "w");
     for (i = 0; i < cols; i++) {
         for (j = 0; j < cols; j++) {
             if (j != cols - 1)
-                fprintf(fp, "%lf,", evects[j][sorted_idxs_desc[i]]);
+                fprintf(fp, "%lf,", evects[j][i]);
             else
-                fprintf(fp, "%lf\n", evects[j][sorted_idxs_desc[i]]);
+                fprintf(fp, "%lf\n", evects[j][i]);
         }   
     }
     fclose(fp);
@@ -124,7 +107,7 @@ int main(int argc, char* argv[]) {
     printf("\nprojecting with %d components...\n", num_components);
     for (i = 0; i < num_components; i++)
         for (j = 0; j < cols; j++)
-            proj[j][i] = evects[j][sorted_idxs_desc[i]];
+            proj[j][i] = evects[j][i];
 
     // printf("\nprojection matrix:\n");
     // print_matrix(proj, cols, num_components);
