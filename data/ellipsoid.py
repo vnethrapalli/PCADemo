@@ -12,7 +12,7 @@ if len(sys.argv) == 10:
         for j in range(3):
             mat[i].append(float(sys.argv[1 + 3 * i + j]))
 else:
-    print('please pass in a space-separated 3x3 matrix (ie. 3 -4 -1 3 4 -1 3 0 2 )')
+    print('please pass in a space-separated 3x3 matrix (ie. 4 -5 -1 4 5 -1 4 0 2 )')
     exit()
 mat = np.array(mat).T
 

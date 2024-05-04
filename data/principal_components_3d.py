@@ -20,7 +20,7 @@ for col in range(len(X[0])):
 # plot the standardized data
 fig = plt.figure()
 axes = fig.add_subplot(projection='3d')
-axes.scatter(X[:, [0]], X[:, [1]], X[:, [2]], color=palette[0], alpha=0.4, edgecolors='none')
+axes.scatter(X[:, [0]], X[:, [1]], X[:, [2]], color=palette[0], alpha=0.9, edgecolors='none')
 axes.set_title('standardized ellipsoid data')
 plt.savefig('ellipsoid_std.png')
 
@@ -55,7 +55,7 @@ for k in range(3):
     axes.plot(xs, ys, zs, alpha=0.8, label=f'pc{k+1}', color=palette[1 + k], linewidth=2)
 plt.legend()
 plt.title('ellipsoid principal components')
-axes.view_init(elev=15)
+axes.view_init(elev=5)
 plt.savefig('ellipsoid_components.png')
 
 
@@ -65,7 +65,7 @@ x = np.linspace(np.min(X[:, [0]]), np.max(X[:, [0]]), 5)
 y = np.linspace(np.min(X[:, [1]]), np.max(X[:, [1]]), 5)
 xmesh, ymesh = np.meshgrid(x, y)
 z = (- xmesh * components[0, 2] - ymesh * components[1, 2]) / components[2, 2]
-axes.plot_surface(xmesh, ymesh, z, alpha=0.2, color=palette[4])
+axes.plot_surface(xmesh, ymesh, z, alpha=0.4, color=palette[4])
 
 idxs = np.random.choice(len(X), size=12, replace=False)
 for idx in idxs:

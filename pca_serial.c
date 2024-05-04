@@ -5,7 +5,7 @@
 #define MAXDATAPOINTS 128
 #define MAXFEATURES 128
 
-int main() {
+int main(int argc, char* argv[]) {
     double (*X)[MAXFEATURES] = malloc(sizeof(*X)*MAXDATAPOINTS);
     double (*X_std)[MAXFEATURES] = malloc(sizeof(*X_std)*MAXDATAPOINTS);
     double (*cov)[MAXFEATURES] = malloc(sizeof(*cov)*MAXDATAPOINTS);
@@ -23,7 +23,11 @@ int main() {
     double* means = malloc(MAXFEATURES * sizeof(double));
     int* sorted_idxs_desc = malloc(MAXFEATURES * sizeof(int));
     size_t len = 0;
-    
+
+    /* process command line argument for number of components */ 
+    if (argc > 1) {
+        num_components = atoi(argv[1]);
+    }
     
 
     /* read in first line to get dimensions of the data */
@@ -117,7 +121,7 @@ int main() {
     fclose(fp);
 
     /* construct projection matrix from the desired number of principal components and eigenvectors */
-    num_components = 1;
+    printf("\nprojecting with %d components...\n", num_components);
     for (i = 0; i < num_components; i++)
         for (j = 0; j < cols; j++)
             proj[j][i] = evects[j][sorted_idxs_desc[i]];
