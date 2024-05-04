@@ -12,7 +12,13 @@ if [ $# -eq 4 ]; then
     python3 principal_components.py
     cd ..
 elif [ $# -eq 9 ]; then
-    echo 9
+    cd data
+    python3 ellipsoid.py $@
+    cd ..
+    ./pca_serial
+    cd data
+    python3 principal_components_3d.py
+    cd ..
 else
     echo "please pass in a space-separated 2x2 or 3x3 matrix (ie. 3 -1 3 1)"
 fi

@@ -1,5 +1,6 @@
 #include "utils/serial.h"
 #include <math.h>
+#include <string.h>
 
 #define MAXDATAPOINTS 128
 #define MAXFEATURES 128
@@ -16,12 +17,13 @@ int main() {
     double (*proj)[MAXFEATURES] = malloc(sizeof(*proj)*MAXDATAPOINTS);
 
     FILE* fp;
-    char* line = NULL;
+    char* line = NULL, *token;
     double x, y, sm, svar, next_sm, next_svar, tot;
     int rows, cols, i, j, k, temp, min_eval_idx, num_components = 1;
     double* means = malloc(MAXFEATURES * sizeof(double));
     int* sorted_idxs_desc = malloc(MAXFEATURES * sizeof(int));
     size_t len = 0;
+    
     
 
     /* read in first line to get dimensions of the data */
@@ -30,9 +32,12 @@ int main() {
     sscanf(line, "%d,%d", &rows, &cols);
     i = 0;
     while ((getline(&line, &len, fp)) != -1) {
-        sscanf(line, "%lf,%lf", &x, &y);
-        X[i][0] = x;
-        X[i][1] = y;
+        token = strtok (line, ",");
+        j = 0;
+        while (token != NULL) {
+            sscanf(token, "%lf", &X[i][j++]);
+            token = strtok(NULL, ",");
+        }
         i++;
     }
     fclose(fp);
@@ -70,8 +75,8 @@ int main() {
         }
     }
     
-    // printf("covariance matrix\n");
-    // print_matrix(cov, cols, cols);
+    printf("covariance matrix\n");
+    print_matrix(cov, cols, cols);
 
     /* get eigen values and eigen vectors from covariance matrix */
     eigs_qr(cov, cols, Q, evals, evects);
